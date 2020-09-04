@@ -1,0 +1,6 @@
+# Ignoring everything
+*
+# whitelist
+!.gitignore
+!*.go
+!README.md
