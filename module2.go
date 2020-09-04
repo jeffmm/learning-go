@@ -3,6 +3,8 @@ package main
 import (
     "fmt"
     "math"
+    "runtime"
+    "time"
 )
 
 // For loop (like C but no parentheses)
@@ -68,14 +70,95 @@ func pow_again(x, n, lim float64) float64 {
     return lim
 }
 
+// helper function for Newton's method 
+func delta(z, x float64) float64 {
+    return (z*z - x) / (2 * z)
+}
+
 // Approximate sqrt(x) within 1% of the precision of x
-func my_sqrt(x, alpha, epsilon float64) float64 {
+func my_sqrt(x, epsilon float64) float64 {
     // alpha is a learning rate, epsilon an error margin
     z := 1.0  // could also init with float64(1)
-    for delta := z*z - x; delta*delta > epsilon*epsilon; delta = z*z-x {
-        z -= alpha * delta
+    eps2 := epsilon * epsilon;
+    for d := delta(z, x); d*d > eps2; d = delta(z, x) {
+        z -= d
     }
     return z
+}
+
+// Check which OS we are running on
+func check_os() {
+    fmt.Print("Go runs on ")
+    // The switch statement does not need to call break
+    switch os := runtime.GOOS; os {
+    case "darwin":
+        fmt.Println("OS X.")
+    case "linux":
+        fmt.Println("Linux.")
+    default:
+        // freebsd, openbsd, plan9, windows...
+        fmt.Printf("%s.\n", os)
+    }
+}
+
+func should_never_run() time.Weekday {
+    fmt.Println("STOP! We should never get here!")
+    return time.Monday
+}
+
+func run_on_friday() {
+    // today := time.Now().Weekday()
+    // Fixing to be Friday for this example
+    today := time.Friday
+    fmt.Print("Saturday is ")
+    switch time.Saturday {
+    case today:
+        fmt.Println("today.")
+    case today + 1:
+        fmt.Println("tomorrow.")
+    // Since today is (always) Friday, this will never evaluate
+    case should_never_run():
+        fmt.Println("Houston, we have a problem.")
+    default:
+        fmt.Println("too far away.")
+    }
+}
+
+func greeting() {
+    t := time.Now()
+    // Same as switch true {...}
+    switch {
+    // if this case is true, then... etc
+    case t.Hour() < 12:
+        fmt.Println("Good morning!")
+    // We can do this since cases are evaluated in order
+    case t.Hour() < 17:
+        fmt.Println("Good afternoon!")
+    default:
+        fmt.Println("Good evening!")
+    }
+}
+
+// Example of deferring a function
+func deferred_func(z int64) {
+    fmt.Printf("deferred_func received %d\n", z)
+}
+func defer_example() {
+    z := int64(42)
+    // evaluate, but delay execution until surrounding function returns
+    defer deferred_func(z)
+    z = 666
+    fmt.Printf("The number of the beast is %d\n", z)
+}
+
+// Deferred functions are put in a stack: evaluated in order, executed LIFO
+func defer_stack() {
+    fmt.Println("Counting down")
+    defer fmt.Println("Lift off!")
+    for i := 0; i < 10; i++ {
+        defer fmt.Println(i+1)
+    }
+    fmt.Println("T-minus:")
 }
 
 func main() {
@@ -92,5 +175,14 @@ func main() {
         pow_again(3, 2, 10),
         pow_again(3, 3, 10),
     )
-    fmt.Println(my_sqrt(2, 0.1, 0.0001))
+    fmt.Println(
+        "The square root of 2 is approximately",
+        my_sqrt(2, 0.0001),
+    )
+    check_os()
+    run_on_friday()
+    greeting()
+    defer_example()
+    defer_stack()
 }
+
