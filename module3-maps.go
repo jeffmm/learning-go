@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+    "fmt"
+    "strings"
+)
 
 // A 2D point in space
 type Vertex struct {
@@ -37,7 +40,55 @@ func map_literals() {
     fmt.Println(n["lab2"])
 }
 
+// Mutate the map 
+func map_mutation() {
+
+    // Make a map of string to int
+    m := make(map[string]int)
+
+    // The ultimate answer to life and everything
+    m["Answer"] = 42
+    fmt.Println("The answer:", m["Answer"])
+
+    // Check the key and value of the map
+    v, ok := m["Answer"]
+    fmt.Println("The value:", v, "Present?", ok)
+
+    // The answer to 6 * 8 I guess?
+    m["Answer"] = 48
+    fmt.Println("The answer:", m["Answer"])
+
+    // Delete the value of the key
+    delete(m, "Answer")
+    fmt.Println("The answer:", m["Answer"])
+
+    // The value is zero'd out
+    v, ok = m["Answer"]
+    fmt.Println("The value:", v, "Present?", ok)
+
+    // Does this work? Yes. It just gives default values of zero.
+    v, ok = m["Question"]
+    fmt.Println("The value:", v, "Present?", ok)
+}
+
+func word_counts(s string) map[string]int {
+    counts := make(map[string]int)
+    words := strings.Fields(s)
+    var v int
+    for i := 0; i < len(words); i++ {
+        v, _ = counts[words[i]]
+        counts[words[i]] = v + 1
+    }
+    return counts
+}
+
 func main() {
     make_a_map()
     map_literals()
+    map_mutation()
+    my_string := "This sentence has six six six in the words words"
+    count_map := word_counts(my_string)
+    for k := range count_map {
+        fmt.Println(k, ":", count_map[k])
+    }
 }
