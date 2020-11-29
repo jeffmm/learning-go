@@ -12,7 +12,7 @@ import (
 type Foo struct {
     bar, baz int
 }
-// Here, (f Foo) is the receiver argument
+// Here we implement a Diff method for the Foo type: (f Foo) is the receiver argument
 func (f Foo) Diff() int {
     return f.bar - f.baz
 }
@@ -33,8 +33,7 @@ func demo_just_funcs() {
 }
 
 // We can use receiver arguments on any type that is defined in this package (not a 
-// built-in or defined in another package). E.g.:A
-
+// built-in or defined in another package). E.g.:
 type MyInt int
 func (mi MyInt) Show() {
     fmt.Println(mi)
